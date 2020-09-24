@@ -5,6 +5,9 @@ const http = require('http');   // 실제 http 기능 수행
 // MongoDB 모듈
 const { MongoClient } = require('mongodb');
 
+// body-parser 등록
+const bodyParser = require('body-parser');
+
 // Express 객체 생성
 const app = express();
 // set 메서드: Express 내부에 여러 값을 설정 ( 주로 설정 )
@@ -22,6 +25,8 @@ function startExpress() {
 // express의 static을 앱의 미들웨어로 등록
 app.use(express.static(__dirname + "/public"));
 //  -> public 디렉터리를 정적파일 저장소로 활용.
+
+app.use(bodyParser.urlencoded( { extended: false }));
 
 // 뷰엔진 설정
 app.set('view engine', 'ejs');  // 뷰 엔진 설정
@@ -100,7 +105,7 @@ function startServer() {
 
     MongoClient.connect(url, { useUnifiedTopology: true } ).then(client => {
         const db = client.db('mydb');
-        console.log('db: ', db);
+        // console.log('db: ', db);
         // express app에 몽고db 커넥션 setup
 
         app.set('db', db);
