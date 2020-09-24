@@ -2,6 +2,9 @@
 const express = require('express'); // 미들웨어
 const http = require('http');   // 실제 http 기능 수행 
 
+// MongoDB 모듈
+const { MongoClient } = require('mongodb');
+
 // Express 객체 생성
 const app = express();
 // set 메서드: Express 내부에 여러 값을 설정 ( 주로 설정 )
@@ -85,5 +88,28 @@ app.get('/render', (req, resp) => {
         .render('render');  // render.ejs 템플릿을 렌더링
 });
 
-startExpress(); 
+// 라우터 등록 ( 미들웨어 )
+const webRouter = require('./router/web')(app);
+app.use('/web', webRouter); // 요청이 /web/ .. => 라우터가 처리
 
+// startExpress(); 
+
+function startServer() {
+    // 데이터베이스 연결
+    const url = 'mongodb://192.168.1.130/27017';
+
+    MongoClient.connect(url, { useUnifiedTopology: true } ).then(client => {
+        const db = client.db('mydb');
+        console.log('db: ', db);
+        // express app에 몽고db 커넥션 setup
+
+        app.set('db', db);
+
+        startExpress();
+
+    }).catch(err => {
+        console.error(err);
+    })
+}
+
+startServer();
