@@ -30,24 +30,28 @@ app.use(bodyParser.urlencoded( { extended: false }));
 
 // 뷰엔진 설정
 app.set('view engine', 'ejs');  // 뷰 엔진 설정
-app.set('views', __dirname + '/views'); // 템플릿 위치 설정
+app.set('views', __dirname + '/public'); // 템플릿 위치 설정
 
+app.engine('html', require('ejs').renderFile);
 
-// 요청 처리
-app.get('/', (req, resp) => {
-    console.log('[GET]: / :');
+// // 요청 처리
+// app.get('/', (req, resp) => {
+//     console.log('[GET]: / :');
 
-    // http 모듈의 전송 방식
+//     // http 모듈의 전송 방식
     
-    // resp.writeHead(200, {'Content-type': 'text/html;charset=utf8'}); // 헤더 전송
-    // resp.write("Express Welcome You!");
-    // resp.end();
+//     // resp.writeHead(200, {'Content-type': 'text/html;charset=utf8'}); // 헤더 전송
+//     // resp.write("Express Welcome You!");
+//     // resp.end();
     
-    // express의 전송 방식
-    resp.status(200)    // 상태 코드
-        .header({"Content-Type" : "text/html;charset=utf8"})
-        .send("Express Welcome You!");
-});
+//     // express의 전송 방식
+//     resp.status(200)    // 상태 코드
+//         .header({"Content-Type" : "text/html;charset=utf8"})
+//         .send("Express Welcome You!");
+// });
+
+const indexRouter = require('./router/index')(app);
+app.use('/', indexRouter);
 
 // GET 요청 파라미터의 처리 : URL Query String 처리
 // url?key1=val1&&key2=val2
@@ -96,6 +100,7 @@ app.get('/render', (req, resp) => {
 // 라우터 등록 ( 미들웨어 )
 const webRouter = require('./router/web')(app);
 app.use('/web', webRouter); // 요청이 /web/ .. => 라우터가 처리
+
 
 // startExpress(); 
 
